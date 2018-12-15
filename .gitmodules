@@ -4,3 +4,6 @@
 [submodule "test/mock"]
 	path = test/mock
 	url = https://github.com/Cycling74/mock.git
+[submodule "max-api"]
+	path = max-api
+	url = https://github.com/jonasohland/max-api
