@@ -189,7 +189,7 @@ namespace c74 { namespace min {
 					s = "?";
 					break;
 			}
-			
+
 			return s;
 		}
 
@@ -224,12 +224,95 @@ namespace c74 { namespace min {
 		/// Compare an atom against an atom for equality.
 		bool operator==(time_value value) const;
 
-		
+
 		/// Return the type of the data contained in the atom.
 		message_type type() {
 			return static_cast<message_type>(a_type);
 		}
-		
+
+		// integral
+		template<typename T>
+		typename std::enable_if<std::is_integral<T>::value, T>::type get() const {
+			if (!(a_type == c74::max::e_max_atomtypes::A_LONG)) {
+				throw bad_atom_access();
+			}
+
+			return static_cast<T>(atom_getlong(this));
+		}
+
+		// float
+		template<typename T>
+		typename std::enable_if<std::is_floating_point<T>::value, T>::type get() const {
+			if (!(a_type == c74::max::e_max_atomtypes::A_FLOAT)) {
+				throw bad_atom_access();
+			}
+
+			return static_cast<T>(atom_getlong(this));
+		}
+
+		// string
+		template<typename T>
+		typename std::enable_if<std::is_same<T, std::string>::value, T>::type get() const {
+			if (!(a_type == c74::max::e_max_atomtypes::A_SYM)) {
+				throw bad_atom_access();
+			}
+
+			return static_cast<T>(*this);
+		}
+
+		// symbol
+		template<typename T>
+		typename std::enable_if<std::is_same<T, symbol>::value, T>::type get() const {
+			if (!(a_type == c74::max::e_max_atomtypes::A_SYM)) {
+				throw bad_atom_access();
+			}
+			return static_cast<T>(*this);
+		}
+
+		// integral
+		template<typename T>
+		static typename std::enable_if<std::is_integral<T>::value, T>::type get(const atom& atm) {
+			if (!(atm.a_type == c74::max::e_max_atomtypes::A_LONG)) {
+				throw bad_atom_access();
+			}
+			return static_cast<T>(atm);
+		}
+
+
+		// float
+		template<typename T>
+		static typename std::enable_if<std::is_floating_point<T>::value, T>::type get(const atom& atm) {
+			if (!(atm.a_type == c74::max::e_max_atomtypes::A_FLOAT)) {
+				throw bad_atom_access();
+			}
+			return static_cast<T>(atm);
+		}
+
+		// string
+		template<typename T>
+		static typename std::enable_if<std::is_same<T, std::string>::value, T>::type get(const atom& atm) {
+			if (!(atm.a_type == c74::max::e_max_atomtypes::A_SYM)) {
+				throw bad_atom_access();
+			}
+			return static_cast<T>(atm);
+		}
+
+		// symbol
+		template<typename T>
+		static typename std::enable_if<std::is_same<T, symbol>::value, T>::type get(const atom& atm) {
+			if (!(atm.a_type == c74::max::e_max_atomtypes::A_SYM)) {
+				throw bad_atom_access();
+			}
+			return static_cast<T>(atm);
+		}
+	};
+
+	
+
+	struct bad_atom_access : public std::exception {
+		virtual const char* what() const noexcept {
+			return "bad atom access";
+		}
 	};
 
 
@@ -413,13 +496,13 @@ namespace std {
 
 
 namespace c74 { namespace min {
-	
+
 	/// Expose atom for use in std output streams.
 	template<class charT, class traits>
 	std::basic_ostream<charT, traits>& operator<<(std::basic_ostream<charT, traits>& stream, const c74::min::atom& a) {
 		return stream << std::string(a);
 	}
-	
+
 
 	/// Copy values from any STL container to a vector of atoms
 	/// @tparam	T			The type of the container
