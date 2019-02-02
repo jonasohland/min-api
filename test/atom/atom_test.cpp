@@ -112,8 +112,43 @@ TEST_CASE("Atom Class", "[atoms]") {
 		REQUIRE(d == Approx(22.1));
 		REQUIRE(str == "symbol");
 
-		REQUIRE_THROWS_AS([=]() { double b = c74::min::atom::get<double>(i_atom); }, c74::min::bad_atom_access);
-		REQUIRE_THROWS_AS([=]() { long b = c74::min::atom::get<long>(f_atom); }, c74::min::bad_atom_access);
-		REQUIRE_THROWS_AS([=]() { long b = c74::min::atom::get<long>(s_atom); }, c74::min::bad_atom_access);
+		bool thrown_int = false;
+		bool thrown_float = false;
+		bool thrown_sym = false;
+
+
+		try {
+			float b = c74::min::atom::get<float>(i_atom);
+		}
+		catch (c74::min::bad_atom_access& ex) {
+			REQUIRE(std::string(ex.what()) == std::string("bad atom access"));
+			thrown_int = true;
+		}
+
+		try {
+			long b = c74::min::atom::get<long>(f_atom);
+		}
+		catch (c74::min::bad_atom_access& ex) {
+			REQUIRE(std::string(ex.what()) == std::string("bad atom access"));
+			thrown_float = true;
+		}
+
+		try {
+			long b = c74::min::atom::get<long>(s_atom);
+		}
+		catch (c74::min::bad_atom_access& ex) {
+			REQUIRE(std::string(ex.what()) == std::string("bad atom access"));
+			thrown_sym = true;
+		}
+
+		REQUIRE(thrown_int);
+		REQUIRE(thrown_float);
+		REQUIRE(thrown_sym);
+
+
+		// these dont work (why?)
+		// REQUIRE_THROWS([=]() { float b = c74::min::atom::get<float>(i_atom); });
+		// REQUIRE_THROWS([=]() { long b = c74::min::atom::get<long>(f_atom); });
+		// REQUIRE_THROWS([=]() { long b = c74::min::atom::get<long>(s_atom); });
 	}
 }
