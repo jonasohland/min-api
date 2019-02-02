@@ -7,6 +7,15 @@
 
 namespace c74 { namespace min {
 
+	
+	class bad_atom_access : public std::exception {
+	public:
+
+		virtual const char* what() const noexcept {
+			return "bad atom access";
+		}
+	};
+
 
 	class atom : public max::t_atom {
 	public:
@@ -233,37 +242,34 @@ namespace c74 { namespace min {
 		// integral
 		template<typename T>
 		typename std::enable_if<std::is_integral<T>::value, T>::type get() const {
-			if (!(a_type == c74::max::e_max_atomtypes::A_LONG)) {
+			if (a_type != c74::max::e_max_atomtypes::A_LONG) {
 				throw bad_atom_access();
 			}
-
-			return static_cast<T>(atom_getlong(this));
+			return static_cast<T>(*this);
 		}
 
 		// float
 		template<typename T>
 		typename std::enable_if<std::is_floating_point<T>::value, T>::type get() const {
-			if (!(a_type == c74::max::e_max_atomtypes::A_FLOAT)) {
+			if (a_type != c74::max::e_max_atomtypes::A_FLOAT) {
 				throw bad_atom_access();
 			}
-
-			return static_cast<T>(atom_getlong(this));
+			return static_cast<T>(*this);
 		}
 
 		// string
 		template<typename T>
 		typename std::enable_if<std::is_same<T, std::string>::value, T>::type get() const {
-			if (!(a_type == c74::max::e_max_atomtypes::A_SYM)) {
+			if (a_type != c74::max::e_max_atomtypes::A_SYM) {
 				throw bad_atom_access();
 			}
-
 			return static_cast<T>(*this);
 		}
 
 		// symbol
 		template<typename T>
 		typename std::enable_if<std::is_same<T, symbol>::value, T>::type get() const {
-			if (!(a_type == c74::max::e_max_atomtypes::A_SYM)) {
+			if (a_type != c74::max::e_max_atomtypes::A_SYM) {
 				throw bad_atom_access();
 			}
 			return static_cast<T>(*this);
@@ -272,7 +278,7 @@ namespace c74 { namespace min {
 		// integral
 		template<typename T>
 		static typename std::enable_if<std::is_integral<T>::value, T>::type get(const atom& atm) {
-			if (!(atm.a_type == c74::max::e_max_atomtypes::A_LONG)) {
+			if (atm.a_type != c74::max::e_max_atomtypes::A_LONG) {
 				throw bad_atom_access();
 			}
 			return static_cast<T>(atm);
@@ -282,7 +288,7 @@ namespace c74 { namespace min {
 		// float
 		template<typename T>
 		static typename std::enable_if<std::is_floating_point<T>::value, T>::type get(const atom& atm) {
-			if (!(atm.a_type == c74::max::e_max_atomtypes::A_FLOAT)) {
+			if (atm.a_type != c74::max::e_max_atomtypes::A_FLOAT) {
 				throw bad_atom_access();
 			}
 			return static_cast<T>(atm);
@@ -291,7 +297,7 @@ namespace c74 { namespace min {
 		// string
 		template<typename T>
 		static typename std::enable_if<std::is_same<T, std::string>::value, T>::type get(const atom& atm) {
-			if (!(atm.a_type == c74::max::e_max_atomtypes::A_SYM)) {
+			if (atm.a_type != c74::max::e_max_atomtypes::A_SYM) {
 				throw bad_atom_access();
 			}
 			return static_cast<T>(atm);
@@ -300,18 +306,10 @@ namespace c74 { namespace min {
 		// symbol
 		template<typename T>
 		static typename std::enable_if<std::is_same<T, symbol>::value, T>::type get(const atom& atm) {
-			if (!(atm.a_type == c74::max::e_max_atomtypes::A_SYM)) {
+			if (atm.a_type != c74::max::e_max_atomtypes::A_SYM) {
 				throw bad_atom_access();
 			}
 			return static_cast<T>(atm);
-		}
-	};
-
-	
-
-	struct bad_atom_access : public std::exception {
-		virtual const char* what() const noexcept {
-			return "bad atom access";
 		}
 	};
 
