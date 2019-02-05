@@ -265,10 +265,17 @@ namespace c74 { namespace min {
 
 		// utility: queue an argument of any type for output
 
-		template<typename argument_type>
-		void queue_argument(const argument_type& arg) noexcept {
-			m_accumulated_output.push_back(arg);
-		}
+        template<typename argument_type>
+        typename std::enable_if<!std::is_same<argument_type, atoms>::value>::type queue_argument(const argument_type& arg) noexcept {
+            m_accumulated_output.push_back(std::move(arg));
+        }
+        
+        template<typename argument_type>
+        typename std::enable_if<std::is_same<argument_type, atoms>::value>::type queue_argument(const argument_type& arg) noexcept {
+            for(const auto& atm : arg){
+                m_accumulated_output.push_back(std::move(atm));
+            }
+        }
 
 		// utility: empty argument handling (required for all recursive variadic templates)
 
