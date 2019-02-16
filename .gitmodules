@@ -6,4 +6,4 @@
 	url = https://github.com/cameron314/readerwriterqueue.git
 [submodule "test/mock"]
 	path = test/mock
-	url = https://github.com/Cycling74/mock.git
+	url = https://github.com/jonasohland/mock.git
