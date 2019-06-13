@@ -375,7 +375,7 @@ namespace c74 { namespace min {
 #define MIN_WRAPPER_ADDMETHOD(c, methname, wrappermethod, methtype)                                                                        \
 	if (a_message.first == #methname) {                                                                                                    \
 		max::class_addmethod(c,                                                                                                            \
-			(max::method)(wrapper_method_##wrappermethod<min_class_type, wrapper_message_name_##methname>), #methname,     \
+			reinterpret_cast<max::method>(wrapper_method_##wrappermethod<min_class_type, wrapper_message_name_##methname>), #methname,     \
 			max::methtype, 0);                                                                                                             \
 	}
 
