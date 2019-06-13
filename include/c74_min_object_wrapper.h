@@ -270,6 +270,16 @@ namespace c74 { namespace min {
 		*pos = as[1];
 		*loop = as[2];
 	}
+    
+    template<class min_class_type, class message_name_type>
+    long wrapper_method_mcouts(max::t_object *o, max::t_symbol* s){
+        auto  self = wrapper_find_self<min_class_type>(o);
+        auto& meth = *self->m_min_object.messages()[message_name_type::name];
+        
+        atoms ra = meth(atoms());
+        
+        return static_cast<long>(ra[0]);
+    }
 
 	// dictionary is a very special case because of the reference counting
 	template<class min_class_type, class message_name_type>
@@ -310,6 +320,8 @@ namespace c74 { namespace min {
 		if (rv)
 			*rv = ra[0];
 	}
+    
+
 
 
 	// In the above wrapper methods we need access to the Max message name,
@@ -336,6 +348,7 @@ namespace c74 { namespace min {
 	MIN_WRAPPER_CREATE_TYPE_FROM_STRING(anything)
 	MIN_WRAPPER_CREATE_TYPE_FROM_STRING(bang)
 	MIN_WRAPPER_CREATE_TYPE_FROM_STRING(dblclick)
+    MIN_WRAPPER_CREATE_TYPE_FROM_STRING(multichanneloutputs)
 	MIN_WRAPPER_CREATE_TYPE_FROM_STRING(dictionary)
 	MIN_WRAPPER_CREATE_TYPE_FROM_STRING(edclose)
 	MIN_WRAPPER_CREATE_TYPE_FROM_STRING(fileusage)
@@ -362,7 +375,7 @@ namespace c74 { namespace min {
 #define MIN_WRAPPER_ADDMETHOD(c, methname, wrappermethod, methtype)                                                                        \
 	if (a_message.first == #methname) {                                                                                                    \
 		max::class_addmethod(c,                                                                                                            \
-			reinterpret_cast<max::method>(wrapper_method_##wrappermethod<min_class_type, wrapper_message_name_##methname>), #methname,     \
+			(max::method)(wrapper_method_##wrappermethod<min_class_type, wrapper_message_name_##methname>), #methname,     \
 			max::methtype, 0);                                                                                                             \
 	}
 
@@ -391,6 +404,7 @@ namespace c74 { namespace min {
 		for (auto& a_message : instance.messages()) {
 			MIN_WRAPPER_ADDMETHOD(c, bang, zero, A_NOTHING)
 			else MIN_WRAPPER_ADDMETHOD(c, dblclick, zero, A_CANT)
+            else MIN_WRAPPER_ADDMETHOD(c, multichanneloutputs, mcouts, A_CANT)
             else MIN_WRAPPER_ADDMETHOD(c, okclose, zero, A_CANT)
             else MIN_WRAPPER_ADDMETHOD(c, edclose, zero, A_CANT)
             else MIN_WRAPPER_ADDMETHOD(c, loadbang, zero, A_CANT)
